@@ -1,1 +1,8 @@
-signup_success
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+<p>Congratulations, you are registered now!</p>
+<p>Your member number is: {{ user.username }}</p>
+<a href="{% url 'signin' %}">Return to sign in page</a>
+{% endblock %}

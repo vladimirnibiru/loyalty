@@ -3,6 +3,7 @@
 
 {% block content %}
     <p>Hi, {{ request.user.get_full_name }}</p>
+    <p>Your member number is: {{ user.username }}</p>
     <p>Total points: {{ request.user.get_profile.points }}</p>
     <a href="{% url 'signout' %}">Sign out</a>
 {% endblock %}

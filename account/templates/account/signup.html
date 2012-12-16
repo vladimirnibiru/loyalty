@@ -1,1 +1,10 @@
-signup
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block content %}
+    <form action="{% url 'signup' %}" method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sign up" />
+    </form>
+    <a href="{% url 'signin' %}">Cancel</a>
+{% endblock %}
