@@ -61,7 +61,7 @@ class SignupForm(forms.ModelForm):
         instance = super(SignupForm, self).save(commit=False)
         instance.set_password(self.cleaned_data.get('password'))
         while True:
-            instance.username = ''.join([str(randint(0, 10))\
+            instance.username = ''.join([str(randint(0, 9))\
                 for i in range(0, 16)])
             try:
                 User.objects.get(username=instance.username)

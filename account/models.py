@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 
 class Account(models.Model):
     user = models.OneToOneField(User)
-    points = models.IntegerField(default=0)
+    points = models.PositiveIntegerField(default=0)
 
 
 def create_user_profile(sender, instance, created, **kwargs):

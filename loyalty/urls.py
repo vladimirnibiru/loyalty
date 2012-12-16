@@ -6,6 +6,7 @@ from django.views.generic.simple import direct_to_template
 urlpatterns = patterns('',
     url(r'^$', 'account.views.signin', name='home'),
     url(r'^account/', include('account.urls')),
+    url(r'^API/', include('transaction.api.urls')),
     url(r'^404/$', direct_to_template, {'template': '404.html'}, name='404'),
     url(r'^500/$', direct_to_template, {'template': '500.html'}, name='500'),
 )
