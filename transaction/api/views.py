@@ -13,8 +13,9 @@ def credit_points(request):
         return HttpResponse(dumps({'status': 'OK'}),
             mimetype='application/json')
     else:
-        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
-            mimetype='application/json')
+        return HttpResponse(dumps({
+                'status': 'ERROR', 'error_message': dict(form.errors.items())
+            }), mimetype='application/json')
 
 
 def query_points(request):
@@ -23,8 +24,9 @@ def query_points(request):
         return HttpResponse(dumps({'status': 'OK', 'points': form.user.get_profile().points}),
             mimetype='application/json')
     else:
-        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
-            mimetype='application/json')
+        return HttpResponse(dumps({
+                'status': 'ERROR', 'error_message': dict(form.errors.items())
+            }), mimetype='application/json')
 
 @csrf_exempt
 def debit_points(request):
@@ -34,5 +36,6 @@ def debit_points(request):
         return HttpResponse(dumps({'status': 'OK'}),
             mimetype='application/json')
     else:
-        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
-            mimetype='application/json')
+        return HttpResponse(dumps({
+                'status': 'ERROR', 'error_message': dict(form.errors.items())
+            }), mimetype='application/json')
