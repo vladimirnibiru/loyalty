@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils.timezone import now
 
 from django import forms
 from django.conf import settings
@@ -11,7 +11,7 @@ class MakeTransactionForm(forms.Form):
     account_no = forms.CharField(min_length=16, max_length=16)
     value = forms.IntegerField(min_value=0)
     activity = forms.CharField(max_length=256, required=False)
-    date = forms.DecimalField()
+    date = forms.DateTimeField()
     key = forms.CharField(max_length=256)
 
     def __init__(self, debit, data={}, *args, **kwargs):
@@ -38,11 +38,7 @@ class MakeTransactionForm(forms.Form):
 
     def clean_date(self):
         date = self.cleaned_data.get('date')
-        try:
-            self.parsed_date = datetime.fromtimestamp(float(date))
-        except:
-            raise forms.ValidationError('Incorrect date timestamp value')
-        if self.parsed_date > datetime.now():
+        if date > now():
             raise forms.ValidationError('Date cannot be from future')
         else:
             return date
@@ -59,7 +55,7 @@ class MakeTransactionForm(forms.Form):
         Transaction.objects.create(
             user = self.user,
             value = signed_value,
-            date = self.parsed_date,
+            date = self.cleaned_data['date'],
             details = self.cleaned_data.get('activity', '')
         )
         profile = self.user.get_profile()
