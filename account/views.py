@@ -4,6 +4,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 
 from account.forms import SigninForm, SignupForm
+from transaction.models import Transaction
 
 
 def signin(request):
@@ -35,5 +36,6 @@ def signup(request):
 def account(request):
     if not request.user.is_authenticated():
         return redirect('signin')
+    transactions = Transaction.objects.filter(user=request.user).order_by('-id')
     return render_to_response('account/account.html', locals(),
         context_instance=RequestContext(request))
