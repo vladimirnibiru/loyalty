@@ -7,10 +7,17 @@ from django.utils.translation import ugettext_lazy as _
 
 from lockout.exceptions import LockedOut
 
+from logging import getLogger
+log = getLogger(__name__)
+
 
 class SigninForm(forms.Form):
     username = forms.CharField(max_length=30, label=_('Member Number'))
     password = forms.CharField(max_length=128, widget=forms.PasswordInput)
+
+    def __init__(self, IP, data={}, *args, **kwargs):
+        super(SigninForm, self).__init__(data, *args, **kwargs)
+        self.IP = IP
 
     def clean(self):
         if self.errors:
@@ -19,6 +26,7 @@ class SigninForm(forms.Form):
             user = authenticate(username=self.cleaned_data['username'],
                 password=self.cleaned_data['password'])
         except LockedOut:
+            log.warn("Username '%s' was locked out (IP: %s)" %(self.cleaned_data['username'], self.IP))
             raise forms.ValidationError('You are locked out')
         else:
             if user:
