@@ -6,14 +6,15 @@ from django.contrib.auth.models import User
 
 from transaction.models import Transaction
 
+
 class MakeTransactionForm(forms.Form):
     account_no = forms.CharField(min_length=16, max_length=16)
     value = forms.IntegerField(min_value=0)
     activity = forms.CharField(max_length=256, required=False)
-    date = forms.DateTimeField(input_formats=['%s'])
+    date = forms.DecimalField()
     key = forms.CharField(max_length=256)
 
-    def __init__(self, debit=False, data={}, *args, **kwargs):
+    def __init__(self, debit, data={}, *args, **kwargs):
         super(MakeTransactionForm, self).__init__(data, *args, **kwargs)
         self.debit = debit
         self.user = None
@@ -29,22 +30,26 @@ class MakeTransactionForm(forms.Form):
             return account_no
 
     def clean_value(self):
-        value = form.cleaned_data.get('value')
-        if self.debit and self.user and self.user.get_profile.points < value:
+        value = self.cleaned_data.get('value')
+        if self.debit and self.user and self.user.get_profile().points < value:
             raise forms.ValidationError('Not enough points')
         else:
             return value
 
     def clean_date(self):
         date = self.cleaned_data.get('date')
-        if date > datetime.now():
-            raise forms.ValidationError('Incorrect date')
+        try:
+            self.parsed_date = datetime.fromtimestamp(float(date))
+        except:
+            raise forms.ValidationError('Incorrect date timestamp value')
+        if self.parsed_date > datetime.now():
+            raise forms.ValidationError('Date cannot be from future')
         else:
             return date
 
     def clean_key(self):
         key = self.cleaned_data.get('key', '')
-        if key != '6ea55dad259016bfc0e117a916343c8d9ded6702':
+        if key != settings.PARTNER_AUTHORIZATION_KEY:
             raise forms.ValidationError('Incorrect key')
         else:
             return key
@@ -54,10 +59,10 @@ class MakeTransactionForm(forms.Form):
         Transaction.objects.create(
             user = self.user,
             value = signed_value,
-            date = self.cleaned_data['date'],
+            date = self.parsed_date,
             details = self.cleaned_data.get('activity', '')
         )
-        profile = user.get_profile()
+        profile = self.user.get_profile()
         profile.points += signed_value
         profile.save()
 
@@ -82,7 +87,7 @@ class QueryPointsForm(forms.Form):
 
     def clean_key(self):
         key = self.cleaned_data.get('key', '')
-        if key != '6ea55dad259016bfc0e117a916343c8d9ded6702':
+        if key != settings.PARTNER_AUTHORIZATION_KEY:
             raise forms.ValidationError('Incorrect key')
         else:
             return key

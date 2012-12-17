@@ -1,34 +1,38 @@
+from json import dumps
+
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from transaction.api.forms import MakeTransactionForm, QueryPointsForm
 
-from tokenapi.http import JsonResponse, JsonError
-
-from utils.decorators import jsonp
-
-
-@jsonp
+@csrf_exempt
 def credit_points(request):
-    form = MakeTransactionForm(request.POST, debit=False)
+    form = MakeTransactionForm(False, data=request.POST)
     if form.is_valid():
         form.save()
-        return JsonResponse({'status': 'OK'})
+        return HttpResponse(dumps({'status': 'OK'}),
+            mimetype='application/json')
     else:
-        return JsonResponse({'status': 'ERROR', 'error_message': str(form.errors)})
+        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
+            mimetype='application/json')
 
-@jsonp
+
 def query_points(request):
     form = QueryPointsForm(request.GET)
     if form.is_valid():
-        return JsonResponse({
-            'status': 'OK', 'points': form.user.get_profile().points
-        })
+        return HttpResponse(dumps({'status': 'OK', 'points': form.user.get_profile().points}),
+            mimetype='application/json')
     else:
-        return JsonResponse({'status': 'ERROR', 'error_message': str(form.errors)})
+        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
+            mimetype='application/json')
 
-@jsonp
+@csrf_exempt
 def debit_points(request):
-    form = MakeTransactionForm(request.POST, debit=True)
+    form = MakeTransactionForm(True, data=request.POST)
     if form.is_valid():
         form.save()
-        return JsonResponse({'status': 'OK'})
+        return HttpResponse(dumps({'status': 'OK'}),
+            mimetype='application/json')
     else:
-        return JsonResponse({'status': 'ERROR', 'error_message': str(form.errors)})
+        return HttpResponse(dumps({'status': 'ERROR', 'error_message': str(form.errors)}),
+            mimetype='application/json')

@@ -163,7 +163,7 @@ LOGGING = {
 
 AUTH_PROFILE_MODULE = 'account.Account'
 LOGIN_URL = '/account/signin'
-Partner_Authorization_Key = '6ea55dad259016bfc0e117a916343c8d9ded6702'
+PARTNER_AUTHORIZATION_KEY = '6ea55dad259016bfc0e117a916343c8d9ded6702'
 
 # allow to override defaults
 try:
