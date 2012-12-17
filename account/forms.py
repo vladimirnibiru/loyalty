@@ -1,8 +1,11 @@
 from random import randint
 
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+
+from lockout.exceptions import LockedOut
 
 
 class SigninForm(forms.Form):
@@ -13,15 +16,16 @@ class SigninForm(forms.Form):
         if self.errors:
             return self.cleaned_data
         try:
-            u = User.objects.get(username=self.cleaned_data.get('username'))
-        except User.DoesNotExist:
-            raise forms.ValidationError('Incorrect member number')
+            user = authenticate(username=self.cleaned_data['username'],
+                password=self.cleaned_data['password'])
+        except LockedOut:
+            raise forms.ValidationError('You are locked out')
         else:
-            if not u.check_password(self.cleaned_data.get('password')):
-                raise forms.ValidationError('Incorrect password')
-            else:
-                self.user = u
+            if user:
+                self.user = user
                 return self.cleaned_data
+            else:
+                raise forms.ValidationError('Authentication failed')
 
 
 class SignupForm(forms.ModelForm):

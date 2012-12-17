@@ -104,6 +104,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'pagination.middleware.PaginationMiddleware',
+    'lockout.middleware.LockoutMiddleware',
 )
 
 ROOT_URLCONF = 'loyalty.urls'
@@ -132,6 +133,7 @@ INSTALLED_APPS = (
     'account',
     'transaction',
     'pagination',
+    'lockout',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -166,6 +168,8 @@ LOGGING = {
 AUTH_PROFILE_MODULE = 'account.Account'
 LOGIN_URL = '/account/signin'
 PARTNER_AUTHORIZATION_KEY = '6ea55dad259016bfc0e117a916343c8d9ded6702'
+LOCKOUT_MAX_ATTEMPTS = 3
+LOCKOUT_TIME = 3600
 
 # allow to override defaults
 try:
