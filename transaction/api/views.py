@@ -22,7 +22,7 @@ def credit_points(request):
         return HttpResponse(dumps({'status': 'OK'}),
             mimetype='application/json')
     else:
-        errors = dict(form.errors.items())
+        errors = str(dict(form.errors.items()))
         log.info("Credit points ['ERROR'] POST %s ERRORS %s" %(data, errors))
         return HttpResponse(dumps({'status': 'ERROR',
             'error_message': errors}), mimetype='application/json')
@@ -40,7 +40,7 @@ def query_points(request):
             mimetype='application/json')
     else:
         return HttpResponse(dumps({
-                'status': 'ERROR', 'error_message': dict(form.errors.items())
+                'status': 'ERROR', 'error_message': str(dict(form.errors.items()))
             }), mimetype='application/json')
 
 @csrf_exempt
@@ -57,7 +57,7 @@ def debit_points(request):
         return HttpResponse(dumps({'status': 'OK'}),
             mimetype='application/json')
     else:
-        errors = dict(form.errors.items())
+        errors = str(dict(form.errors.items()))
         log.info("Debit points ['ERROR'] POST %s ERRORS %s" %(data, errors))
         return HttpResponse(dumps({'status': 'ERROR',
             'error_message': errors}), mimetype='application/json')
