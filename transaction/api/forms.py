@@ -10,7 +10,7 @@ class MakeTransactionForm(forms.Form):
     account_no = forms.CharField(min_length=16, max_length=16)
     value = forms.IntegerField(min_value=0)
     activity = forms.CharField(max_length=256, required=False)
-    date = forms.DateTimeField()
+    date = forms.DateTimeField(input_formats=["%Y-%m-%dT%H:%M:%S"])
     key = forms.CharField(max_length=256)
 
     def __init__(self, debit, data={}, *args, **kwargs):
